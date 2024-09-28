@@ -8,5 +8,31 @@
   </head>
   <body>
     <h1>Hello world!</h1>
+    <button id="addBtn">Add book</button>
+    <div id="newBook">
+      <h2>Search book cover:</h2>
+      <form method="POST" action="/api/search">
+        <input type="text" name="q" />
+        <button type="submit">Send</button>
+      </form>
+      <div class="">
+        <form id="box" method="POST" action="/add">
+          <input type="hidden" id="choosenCover" name="choosenCover" value="" />
+
+          <% if (locals.coverIds && coverIds.length > 0){ %>
+          <h2>Choose one from the available covers:</h2>
+          <% for(coverId of coverIds){ %>
+          <img
+            onclick="handler('<%= coverId %>')"
+            id="cover<%= coverId %>"
+            class="covers"
+            src="https://covers.openlibrary.org/b/id/<%= coverId %>.jpg"
+          />
+          <% } %> <br />
+          <input type="text" name="title" placeholder="title" />
+          <button type="submit">Add</button> <% } %>
+        </form>
+      </div>
+    </div>
   </body>
 </html>
