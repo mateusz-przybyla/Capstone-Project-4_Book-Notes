@@ -29,6 +29,8 @@ app.post("/api/search", async (req, res) => {
       API_URL + `/search.json/?${searchBy}=${q}&sort=${sort}&limit=${limit}`
     );
 
+    coverIds = [];
+
     const result = await axios.get(
       API_URL + `/search.json/?${searchBy}=${q}&sort=${sort}&limit=${limit}`
     );
