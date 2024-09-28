@@ -8,9 +8,12 @@
   </head>
   <body>
     <h1>Hello world!</h1>
-    <button id="addBtn" onclick="addNewBook()">Create new</button>
+    <% if (locals.error) {%>
+    <p class="error"><%= error %></p>
+    <% } %>
+    <button id="addBtn" onclick="createNewBook()">Create new</button>
     <div>
-      <div id="newBook" hidden>
+      <div id="newCover" hidden>
         <h2>Search book cover:</h2>
         <form method="POST" action="/api/search">
           <input type="text" name="q" />
@@ -31,14 +34,16 @@
             src="https://covers.openlibrary.org/b/id/<%= coverId %>.jpg"
           />
           <% } %> <br />
-          <input type="text" name="title" placeholder="title" />
-          <button type="submit" onclick="sendData()">Add book</button> <% } %>
+          <input type="text" name="title" placeholder="title" required />
+          <button type="submit" onclick="sendMessage()">Add book</button> <% }
+          %>
         </form>
       </div>
     </div>
     <script>
       function handler(id) {
-        const convertedIds = "<%= coverIds %>".split(",");
+        const convertedIds =
+          "<% if(locals.coverIds){%><%= coverIds %><%}%>".split(",");
 
         var cover = document.getElementById("cover" + id);
         cover.classList.add("frame");
@@ -57,9 +62,9 @@
       }
     </script>
     <script>
-      function addNewBook() {
+      function createNewBook() {
         document.getElementById("addBtn").setAttribute("hidden", true);
-        document.getElementById("newBook").removeAttribute("hidden");
+        document.getElementById("newCover").removeAttribute("hidden");
       }
     </script>
   </body>
