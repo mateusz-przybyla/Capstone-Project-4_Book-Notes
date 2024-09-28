@@ -1,9 +1,20 @@
 import express from "express";
 import axios from "axios";
 import bodyParser from "body-parser";
+import pg from "pg";
 
 const app = express();
 const port = 3000;
+
+const db = new pg.Client({
+  user: "postgres",
+  host: "localhost",
+  database: "book_notes",
+  password: "",
+  port: 5432,
+});
+
+db.connect();
 
 const API_URL = "https://openlibrary.org";
 var coverIds = [];
