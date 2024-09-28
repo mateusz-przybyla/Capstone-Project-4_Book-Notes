@@ -1,9 +1,20 @@
 import express from "express";
 import axios from "axios";
 import bodyParser from "body-parser";
+import pg from "pg";
 
 const app = express();
 const port = 3000;
+
+const db = new pg.Client({
+  user: "postgres",
+  host: "localhost",
+  database: "book_notes",
+  password: "", //delete!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  port: 5432,
+});
+
+db.connect();
 
 const API_URL = "https://openlibrary.org";
 var coverIds = [];
@@ -11,7 +22,16 @@ var coverIds = [];
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
+  const user_id = 1;
+  const result = await db.query("SELECT * FROM books WHERE user_id = $1", [
+    user_id,
+  ]);
+
+  const test = result.rows;
+
+  console.log(test);
+
   res.render("index.ejs", {
     coverIds: coverIds,
   });
