@@ -40,6 +40,22 @@
         </form>
       </div>
     </div>
+    <hr />
+    <div>
+      <div>
+        <% if(locals.books){ %> <% for(book of books){ %>
+        <p><%= book.title %></p>
+        <p><%= book.author %></p>
+        <p><%= book.date %></p>
+        <p><%= book.notes %></p>
+        <img
+          src="https://covers.openlibrary.org/b/id/<%= book.cover_id %>.jpg"
+        />
+        <hr />
+        <% } %> <% } %>
+      </div>
+    </div>
+
     <script>
       function handler(id) {
         const convertedIds =

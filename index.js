@@ -24,16 +24,18 @@ app.use(express.static("public"));
 
 app.get("/", async (req, res) => {
   const user_id = 1;
-  const result = await db.query("SELECT * FROM books WHERE user_id = $1", [
-    user_id,
-  ]);
+  const result = await db.query(
+    "SELECT cover_id, title, author, notes, TO_CHAR(date_read, 'dd/mm/yyyy') AS date FROM books WHERE user_id = $1",
+    [user_id]
+  );
 
-  const test = result.rows;
+  const books = result.rows;
 
-  console.log(test);
+  console.log(books);
 
   res.render("index.ejs", {
     coverIds: coverIds,
+    books: books,
   });
 });
 
