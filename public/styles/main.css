@@ -1,3 +1,16 @@
+body {
+  text-align: center;
+}
+
+img {
+  height: 295px;
+  width: 180px;
+}
+
 h1 {
   color: rgb(255, 123, 0);
+}
+
+.frame {
+  border: 3px solid green;
 }
