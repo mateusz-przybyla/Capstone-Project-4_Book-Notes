@@ -16,13 +16,12 @@ const db = new pg.Client({
 
 db.connect();
 
-const API_URL = "https://openlibrary.org";
-var coverIds = [];
-
-var user = "Mateusz Przybyła"; //temporary setting
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
+
+const API_URL = "https://openlibrary.org";
+
+var user = "Mateusz Przybyła"; //temporary setting
 
 async function fetchBooks(user_id) {
   const result = await db.query(
@@ -36,33 +35,30 @@ async function fetchBooks(user_id) {
 
 app.get("/", async (req, res) => {
   const user_id = 1; //temporary setting
+
   const books = await fetchBooks(user_id);
 
   console.log(books);
 
   res.render("index.ejs", {
     title: user,
-    coverIds: coverIds,
     books: books,
   });
 });
 
-app.get("/back", (req, res) => {
-  coverIds = [];
-
-  res.redirect("/");
-});
-
 app.post("/api/search", async (req, res) => {
+  const user_id = 1; //temporary setting
+
   const q = req.body.q;
+  const books = await fetchBooks(user_id);
 
   try {
     const searchBy = "q";
     const limit = 5;
     const sort = "rating";
 
-    const allCoverIds = [];
-    coverIds = [];
+    var allCoverIds = [];
+    var coverIds = [];
 
     console.log(
       API_URL + `/search.json/?${searchBy}=${q}&sort=${sort}&limit=${limit}`
@@ -79,11 +75,19 @@ app.post("/api/search", async (req, res) => {
     coverIds = allCoverIds.filter((coverId) => coverId !== undefined);
     console.log(coverIds);
 
-    res.redirect("/");
+    res.render("index.ejs", {
+      title: user,
+      books: books,
+      coverIds: coverIds,
+    });
   } catch (error) {
     console.log(error);
 
-    res.redirect("/");
+    res.render("index.ejs", {
+      title: user,
+      books: books,
+      error: "Cannot find covers. Type another title.",
+    });
   }
 });
 
@@ -94,7 +98,6 @@ app.post("/book/add", async (req, res) => {
   const notes = req.body.notes;
   const date = req.body.date;
 
-  coverIds = [];
   const user_id = 1; //temporary setting
 
   try {
@@ -110,8 +113,8 @@ app.post("/book/add", async (req, res) => {
 
     res.render("index.ejs", {
       title: user,
-      error: "Error saving data, try again.",
       books: books,
+      error: "Error saving data. Try again.",
     });
   }
 });
@@ -138,14 +141,16 @@ app.post("/book/edit/:id", async (req, res) => {
 
     res.render("index.ejs", {
       title: user,
-      error: "Error saving data, try again.",
       books: books,
+      error: "Error saving data. Try again.",
     });
   }
 });
 
 app.post("/book/delete/:id", async (req, res) => {
   const deletedBookId = req.params.id;
+
+  const user_id = 1; //temporary setting
 
   try {
     await db.query("DELETE FROM books WHERE books.id = $1", [deletedBookId]);
