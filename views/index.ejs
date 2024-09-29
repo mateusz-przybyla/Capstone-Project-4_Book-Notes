@@ -50,7 +50,7 @@
             <input type="date" name="date" placeholder="Date" required />
 
             <button type="submit">Add book</button>
-            <a href="/back" class="">Cancel</a>
+            <a href="/" class="">Delete</a>
           </div>
           <% } %>
         </form>
@@ -110,7 +110,7 @@
           <button id="doneBtn<%=book.id%>" class="edit" type="submit">
             Done
           </button>
-          <a href="/back" class="">Cancel</a>
+          <a href="/" class="">Delete</a>
         </form>
         <!-- end Edit data form -->
         <button
@@ -125,8 +125,14 @@
           <button id="deleteBtn<%=book.id%>" class="delete">Delete</button>
         </form>
         <!-- end Delete data form -->
-
+        <% if (book.cover_id) { %>
         <img src="https://covers.openlibrary.org/b/id/<%=book.cover_id%>.jpg" />
+        <%} else{ %>
+        <img
+          src="/assets/icons/file-person.svg"
+          alt="unknown"
+          class="empty"
+        /><% } %>
 
         <hr />
       </div>
