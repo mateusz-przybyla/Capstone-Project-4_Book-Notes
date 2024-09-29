@@ -19,7 +19,7 @@ h1 {
   color: red;
 }
 
-.form-box {
+.newBookBox {
   display: flex;
   flex-direction: column;
   width: 300px;
@@ -27,4 +27,14 @@ h1 {
   margin: auto;
   margin-top: 20px;
   margin-bottom: 20px;
+}
+
+.bookBox {
+  width: 300px;
+  margin: auto;
+}
+
+.bookData {
+  width: 100%;
+  margin-bottom: 10px;
 }

@@ -19,12 +19,14 @@ db.connect();
 const API_URL = "https://openlibrary.org";
 var coverIds = [];
 
+var user = "Mateusz Przybyła"; //temporary setting
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 async function fetchBooks(user_id) {
   const result = await db.query(
-    "SELECT cover_id, title, author, notes, TO_CHAR(date_read, 'dd/mm/yyyy') AS date FROM books WHERE user_id = $1",
+    "SELECT id, cover_id, title, author, notes, TO_CHAR(date_read, 'yyyy-mm-dd') AS date FROM books WHERE user_id = $1",
     [user_id]
   );
   const books = result.rows;
@@ -33,12 +35,13 @@ async function fetchBooks(user_id) {
 }
 
 app.get("/", async (req, res) => {
-  const user_id = 1;
+  const user_id = 1; //temporary setting
   const books = await fetchBooks(user_id);
 
   console.log(books);
 
   res.render("index.ejs", {
+    title: user,
     coverIds: coverIds,
     books: books,
   });
@@ -78,25 +81,19 @@ app.post("/api/search", async (req, res) => {
     console.log(error);
 
     res.render("index.ejs", {
+      title: user,
       error: "No results, try again.",
     });
   }
 });
 
-app.post("/add", async (req, res) => {
+app.post("/books/add", async (req, res) => {
   const coverId = req.body.choosenCover;
   const title = req.body.title;
   const author = req.body.author;
   const notes = req.body.notes;
   const date = req.body.date;
-  const user_id = 1;
-
-  console.log(coverId);
-  console.log(title);
-  console.log(author);
-  console.log(notes);
-  console.log(date);
-  console.log(user_id);
+  const user_id = 1; //temporary setting
 
   try {
     await db.query(
@@ -110,6 +107,35 @@ app.post("/add", async (req, res) => {
     const books = await fetchBooks(user_id);
 
     res.render("index.ejs", {
+      title: user,
+      error: "Error saving data, try again.",
+      books: books,
+    });
+  }
+});
+
+app.post("/books/edit", async (req, res) => {
+  //const updatedCoverId = req.body.updatedCover;
+  const updatedBookId = req.body.updatedBookId;
+  const updatedTitle = req.body.updatedTitle;
+  const updatedAuthor = req.body.updatedAuthor;
+  const updatedNotes = req.body.updatedNotes;
+  const updatedDate = req.body.updatedDate;
+  const user_id = 1; //temporary setting
+
+  try {
+    await db.query(
+      "UPDATE books SET title = $1, author = $, notes = $3, date_read = $4 WHERE books.id = $5",
+      [updatedTitle, updatedAuthor, updatedNotes, updatedDate, updatedBookId]
+    );
+
+    res.redirect("/");
+  } catch (error) {
+    console.log(error);
+    const books = await fetchBooks(user_id);
+
+    res.render("index.ejs", {
+      title: user,
       error: "Error saving data, try again.",
       books: books,
     });
