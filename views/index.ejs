@@ -24,7 +24,7 @@
       </div>
       <div class="">
         <!-- Add book form -->
-        <form method="POST" action="/books/add">
+        <form method="POST" action="/book/add">
           <input type="hidden" id="choosenCover" name="choosenCover" value="" />
 
           <% if (locals.coverIds && coverIds.length > 0){ %>
@@ -49,7 +49,7 @@
             ></textarea>
             <input type="date" name="date" placeholder="Date" required />
 
-            <button type="submit" onclick="sendMessage()">Add book</button>
+            <button type="submit">Add book</button>
             <a href="/back" class="">Cancel</a>
           </div>
           <% } %>
@@ -71,11 +71,10 @@
         <!-- Edit book data form -->
         <form
           method="POST"
-          action="/books/edit"
+          action="/book/edit/<%=book.id%>"
           id="editForm<%=book.id%>"
           hidden
         >
-          <input type="hidden" name="updatedBookId" value="<%= book.id %>" />
           <input
             id="editTitle<%=book.id%>"
             class="bookData"
@@ -122,7 +121,7 @@
           Edit
         </button>
         <!-- Delete data form -->
-        <form method="POST" action="/books/delete/<%=book.id%>">
+        <form method="POST" action="/book/delete/<%=book.id%>">
           <button id="deleteBtn<%=book.id%>" class="delete">Delete</button>
         </form>
         <!-- end Delete data form -->

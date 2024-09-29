@@ -87,12 +87,14 @@ app.post("/api/search", async (req, res) => {
   }
 });
 
-app.post("/books/add", async (req, res) => {
+app.post("/book/add", async (req, res) => {
   const coverId = req.body.choosenCover;
   const title = req.body.title;
   const author = req.body.author;
   const notes = req.body.notes;
   const date = req.body.date;
+
+  coverIds = [];
   const user_id = 1; //temporary setting
 
   try {
@@ -114,12 +116,13 @@ app.post("/books/add", async (req, res) => {
   }
 });
 
-app.post("/books/edit", async (req, res) => {
-  const updatedBookId = req.body.updatedBookId;
+app.post("/book/edit/:id", async (req, res) => {
+  const updatedBookId = req.params.id;
   const updatedTitle = req.body.updatedTitle;
   const updatedAuthor = req.body.updatedAuthor;
   const updatedNotes = req.body.updatedNotes;
   const updatedDate = req.body.updatedDate;
+
   const user_id = 1; //temporary setting
 
   try {
@@ -141,7 +144,7 @@ app.post("/books/edit", async (req, res) => {
   }
 });
 
-app.post("/books/delete/:id", async (req, res) => {
+app.post("/book/delete/:id", async (req, res) => {
   const deletedBookId = req.params.id;
 
   try {
