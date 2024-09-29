@@ -114,9 +114,6 @@
           <a href="/back" class="">Cancel</a>
         </form>
         <!-- end Edit data form -->
-        <img
-          src="https://covers.openlibrary.org/b/id/<%= book.cover_id %>.jpg"
-        />
         <button
           id="editBtn<%=book.id%>"
           class="edit"
@@ -124,6 +121,13 @@
         >
           Edit
         </button>
+        <!-- Delete data form -->
+        <form method="POST" action="/books/delete/<%=book.id%>">
+          <button id="deleteBtn<%=book.id%>" class="delete">Delete</button>
+        </form>
+        <!-- end Delete data form -->
+
+        <img src="https://covers.openlibrary.org/b/id/<%=book.cover_id%>.jpg" />
 
         <hr />
       </div>

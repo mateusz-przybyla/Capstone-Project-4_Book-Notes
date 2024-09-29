@@ -54,11 +54,14 @@ app.get("/back", (req, res) => {
 });
 
 app.post("/api/search", async (req, res) => {
+  const q = req.body.q;
+
   try {
     const searchBy = "q";
-    const q = req.body.q;
     const limit = 5;
     const sort = "rating";
+
+    const allCoverIds = [];
     coverIds = [];
 
     console.log(
@@ -68,7 +71,7 @@ app.post("/api/search", async (req, res) => {
     const result = await axios.get(
       API_URL + `/search.json/?${searchBy}=${q}&sort=${sort}&limit=${limit}`
     );
-    const allCoverIds = [];
+
     for (var i = 0; i < limit; i++) {
       allCoverIds.push(result.data.docs[i].cover_i);
     }
@@ -80,10 +83,7 @@ app.post("/api/search", async (req, res) => {
   } catch (error) {
     console.log(error);
 
-    res.render("index.ejs", {
-      title: user,
-      error: "No results, try again.",
-    });
+    res.redirect("/");
   }
 });
 
@@ -115,7 +115,6 @@ app.post("/books/add", async (req, res) => {
 });
 
 app.post("/books/edit", async (req, res) => {
-  //const updatedCoverId = req.body.updatedCover;
   const updatedBookId = req.body.updatedBookId;
   const updatedTitle = req.body.updatedTitle;
   const updatedAuthor = req.body.updatedAuthor;
@@ -125,7 +124,7 @@ app.post("/books/edit", async (req, res) => {
 
   try {
     await db.query(
-      "UPDATE books SET title = $1, author = $, notes = $3, date_read = $4 WHERE books.id = $5",
+      "UPDATE books SET title = $1, author = $2, notes = $3, date_read = $4 WHERE books.id = $5",
       [updatedTitle, updatedAuthor, updatedNotes, updatedDate, updatedBookId]
     );
 
@@ -137,6 +136,25 @@ app.post("/books/edit", async (req, res) => {
     res.render("index.ejs", {
       title: user,
       error: "Error saving data, try again.",
+      books: books,
+    });
+  }
+});
+
+app.post("/books/delete/:id", async (req, res) => {
+  const deletedBookId = req.params.id;
+
+  try {
+    await db.query("DELETE FROM books WHERE books.id = $1", [deletedBookId]);
+
+    res.redirect("/");
+  } catch (error) {
+    console.log(error);
+    const books = await fetchBooks(user_id);
+
+    res.render("index.ejs", {
+      title: user,
+      error: "Error deleting data, try again.",
       books: books,
     });
   }
