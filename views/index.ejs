@@ -16,7 +16,7 @@
       <div id="newCover" hidden>
         <h2>Search book cover:</h2>
         <form method="POST" action="/api/search">
-          <input type="text" name="q" />
+          <input type="text" name="q" placeholder="e.g. Jurassic Park" />
           <button type="submit">Search</button>
         </form>
       </div>
@@ -34,9 +34,22 @@
             src="https://covers.openlibrary.org/b/id/<%= coverId %>.jpg"
           />
           <% } %> <br />
-          <input type="text" name="title" placeholder="title" required />
-          <button type="submit" onclick="sendMessage()">Add book</button> <% }
-          %>
+          <div class="form-box">
+            <input type="text" name="title" placeholder="Title" required />
+            <input type="text" name="author" placeholder="Author" required />
+            <textarea
+              type="text"
+              name="notes"
+              placeholder="Notes"
+              rows="3"
+              required
+            ></textarea>
+            <input type="date" name="date" placeholder="Date" required />
+
+            <button type="submit" onclick="sendMessage()">Add book</button>
+            <a href="/back" class="">Cancel</a>
+          </div>
+          <% } %>
         </form>
       </div>
     </div>
@@ -61,8 +74,8 @@
         const convertedIds =
           "<% if(locals.coverIds){%><%= coverIds %><%}%>".split(",");
 
-        var cover = document.getElementById("cover" + id);
-        cover.classList.add("frame");
+        var choosenCover = document.getElementById("cover" + id);
+        choosenCover.classList.add("frame");
         document.getElementById("choosenCover").value = id;
 
         setTimeout(function () {
@@ -70,8 +83,8 @@
             if (convertedId !== id) {
               console.log("cover" + convertedId);
 
-              var image = document.getElementById("cover" + convertedId);
-              image.setAttribute("hidden", true);
+              var otherCover = document.getElementById("cover" + convertedId);
+              otherCover.setAttribute("hidden", true);
             }
           }
         }, 400);

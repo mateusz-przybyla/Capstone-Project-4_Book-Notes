@@ -18,3 +18,13 @@ h1 {
 .error {
   color: red;
 }
+
+.form-box {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  gap: 10px;
+  margin: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
