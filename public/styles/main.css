@@ -18,3 +18,23 @@ h1 {
 .error {
   color: red;
 }
+
+.newBookBox {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  gap: 10px;
+  margin: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.bookBox {
+  width: 300px;
+  margin: auto;
+}
+
+.bookData {
+  width: 100%;
+  margin-bottom: 10px;
+}

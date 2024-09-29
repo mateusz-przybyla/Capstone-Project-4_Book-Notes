@@ -4,24 +4,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="styles/main.css" />
-    <title>Book notes</title>
+    <title>Book notes | <%=title %></title>
   </head>
   <body>
-    <h1>Hello world!</h1>
+    <h1>Books I’ve read</h1>
     <% if (locals.error) {%>
     <p class="error"><%= error %></p>
     <% } %>
-    <button id="addBtn" onclick="createNewBook()">Create new</button>
+    <button id="addBtn" onclick="createNewBook()">+</button>
     <div>
       <div id="newCover" hidden>
         <h2>Search book cover:</h2>
+        <!-- Search cover form -->
         <form method="POST" action="/api/search">
-          <input type="text" name="q" />
+          <input type="text" name="q" placeholder="e.g. Jurassic Park" />
           <button type="submit">Search</button>
         </form>
+        <!-- Search cover form -->
       </div>
       <div class="">
-        <form method="POST" action="/add">
+        <!-- Add book form -->
+        <form method="POST" action="/book/add">
           <input type="hidden" id="choosenCover" name="choosenCover" value="" />
 
           <% if (locals.coverIds && coverIds.length > 0){ %>
@@ -34,19 +37,109 @@
             src="https://covers.openlibrary.org/b/id/<%= coverId %>.jpg"
           />
           <% } %> <br />
-          <input type="text" name="title" placeholder="title" required />
-          <button type="submit" onclick="sendMessage()">Add book</button> <% }
-          %>
+          <div class="newBookBox">
+            <input type="text" name="title" placeholder="Title" required />
+            <input type="text" name="author" placeholder="Author" required />
+            <textarea
+              type="text"
+              name="notes"
+              placeholder="Notes"
+              rows="3"
+              required
+            ></textarea>
+            <input type="date" name="date" placeholder="Date" required />
+
+            <button type="submit">Add book</button>
+            <a href="/back" class="">Cancel</a>
+          </div>
+          <% } %>
         </form>
+        <!-- end Add book form -->
       </div>
     </div>
+    <hr />
+    <div>
+      <% if(locals.books){ %> <% for(book of books){ %>
+      <div class="bookBox">
+        <div id="bookData<%=book.id%>">
+          <p><%= book.id %></p>
+          <p><%= book.title %></p>
+          <p><%= book.author %></p>
+          <p><%= book.date %></p>
+          <p><%= book.notes %></p>
+        </div>
+        <!-- Edit book data form -->
+        <form
+          method="POST"
+          action="/book/edit/<%=book.id%>"
+          id="editForm<%=book.id%>"
+          hidden
+        >
+          <input
+            id="editTitle<%=book.id%>"
+            class="bookData"
+            type="text"
+            name="updatedTitle"
+            value="<%= book.title %>"
+            autocomplete="off"
+          />
+          <input
+            id="editAuthor<%=book.id%>"
+            class="bookData"
+            type="text"
+            name="updatedAuthor"
+            value="<%= book.author %>"
+            autocomplete="off"
+          />
+          <input
+            id="editDate<%=book.id%>"
+            class="bookData"
+            type="date"
+            name="updatedDate"
+            value="<%= book.date %>"
+            autocomplete="off"
+          />
+          <input
+            id="editNotes<%=book.id%>"
+            class="bookData"
+            type="text"
+            name="updatedNotes"
+            value="<%= book.notes %>"
+            autocomplete="off"
+          />
+          <button id="doneBtn<%=book.id%>" class="edit" type="submit">
+            Done
+          </button>
+          <a href="/back" class="">Cancel</a>
+        </form>
+        <!-- end Edit data form -->
+        <button
+          id="editBtn<%=book.id%>"
+          class="edit"
+          onclick="editHandler('<%=book.id%>')"
+        >
+          Edit
+        </button>
+        <!-- Delete data form -->
+        <form method="POST" action="/book/delete/<%=book.id%>">
+          <button id="deleteBtn<%=book.id%>" class="delete">Delete</button>
+        </form>
+        <!-- end Delete data form -->
+
+        <img src="https://covers.openlibrary.org/b/id/<%=book.cover_id%>.jpg" />
+
+        <hr />
+      </div>
+      <% } %> <% } %>
+    </div>
+
     <script>
       function handler(id) {
         const convertedIds =
           "<% if(locals.coverIds){%><%= coverIds %><%}%>".split(",");
 
-        var cover = document.getElementById("cover" + id);
-        cover.classList.add("frame");
+        var choosenCover = document.getElementById("cover" + id);
+        choosenCover.classList.add("frame");
         document.getElementById("choosenCover").value = id;
 
         setTimeout(function () {
@@ -54,8 +147,8 @@
             if (convertedId !== id) {
               console.log("cover" + convertedId);
 
-              var image = document.getElementById("cover" + convertedId);
-              image.setAttribute("hidden", true);
+              var otherCover = document.getElementById("cover" + convertedId);
+              otherCover.setAttribute("hidden", true);
             }
           }
         }, 400);
@@ -65,6 +158,17 @@
       function createNewBook() {
         document.getElementById("addBtn").setAttribute("hidden", true);
         document.getElementById("newCover").removeAttribute("hidden");
+      }
+    </script>
+    <script>
+      function editHandler(id) {
+        document.getElementById("addBtn").setAttribute("hidden", true);
+        document.getElementById("bookData" + id).setAttribute("hidden", true);
+
+        document.getElementById("editBtn" + id).setAttribute("hidden", true);
+        document.getElementById("doneBtn" + id).removeAttribute("hidden");
+
+        document.getElementById("editForm" + id).removeAttribute("hidden");
       }
     </script>
   </body>
