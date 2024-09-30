@@ -9,7 +9,7 @@
   <body>
     <h1>Books we’ve read</h1>
 
-    <% if (locals.error) {%>
+    <% if (locals.error){%>
     <p class="error"><%= error %></p>
     <% } %>
     <!-- Users list -->
@@ -18,9 +18,24 @@
       <div class="container" id="users">
         <h2>Who's making notes?</h2>
         <div class="usersList">
-          <% if(locals.users){ %> <% for(user of users){ %>
-          <button class="tile"><%=user.name%></button>
-          <% } %> <% } %>
+          <form method="POST" action="/user">
+            <% if(locals.users){ %> <% for(user of users){ %>
+            <input
+              type="submit"
+              name="user"
+              value="<%= user.id %>"
+              id="<%= user.id %>"
+              class="inputHidden"
+            />
+            <label
+              for="<%= user.id %>"
+              style="background-color: <%= user.color %>"
+              class="tile"
+            >
+              <%= user.name %>
+            </label>
+            <% } %> <% } %>
+          </form>
 
           <button id="newUserBtn" class="tile" onclick="openUserForm()">
             + user

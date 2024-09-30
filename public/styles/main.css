@@ -21,7 +21,6 @@ body {
 
 .tile {
   display: inline-block;
-  background-color: darkcyan;
   height: 100px;
   width: 100px;
   cursor: pointer;
@@ -29,6 +28,10 @@ body {
 
 .tile:hover {
   transform: scale(1.05);
+}
+
+.inputHidden {
+  display: none;
 }
 
 img {
