@@ -21,6 +21,7 @@ app.use(express.static("public"));
 
 const API_URL = "https://openlibrary.org";
 
+var currentUserId = 1;
 var user = "Mateusz Przybyła"; //temporary setting
 
 async function fetchBooks(user_id) {
@@ -33,16 +34,27 @@ async function fetchBooks(user_id) {
   return books;
 }
 
+async function fetchUsers() {
+  const result = await db.query("SELECT * FROM users");
+  var users = [];
+  result.rows.forEach((user) => {
+    users.push(user);
+  });
+  return users;
+}
+
 app.get("/", async (req, res) => {
   const user_id = 1; //temporary setting
 
   const books = await fetchBooks(user_id);
+  const users = await fetchUsers();
 
   console.log(books);
 
   res.render("index.ejs", {
     title: user,
     books: books,
+    users: users,
   });
 });
 
@@ -50,7 +62,6 @@ app.post("/api/search", async (req, res) => {
   const user_id = 1; //temporary setting
 
   const q = req.body.q;
-  const books = await fetchBooks(user_id);
 
   try {
     const searchBy = "q";
@@ -77,7 +88,6 @@ app.post("/api/search", async (req, res) => {
 
     res.render("index.ejs", {
       title: user,
-      books: books,
       coverIds: coverIds,
     });
   } catch (error) {
@@ -85,7 +95,6 @@ app.post("/api/search", async (req, res) => {
 
     res.render("index.ejs", {
       title: user,
-      books: books,
       error: "Cannot find covers. Type another title.",
     });
   }
@@ -165,6 +174,21 @@ app.post("/book/delete/:id", async (req, res) => {
       error: "Error deleting data, try again.",
       books: books,
     });
+  }
+});
+
+app.post("/user/add", async (req, res) => {
+  try {
+    const lastId = await db.query(
+      "INSERT INTO users (name, color) VALUES ($1, $2) RETURNING id",
+      [req.body.name, req.body.color]
+    );
+
+    currentUserId = lastId.rows[0].id;
+
+    res.redirect("/");
+  } catch (err) {
+    console.log(err);
   }
 });
 
