@@ -21,7 +21,8 @@ app.use(express.static("public"));
 
 const API_URL = "https://openlibrary.org";
 
-var user = "Mateusz Przybyła"; //temporary setting
+var currentUserId = 1;
+var username = "";
 
 async function fetchBooks(user_id) {
   const result = await db.query(
@@ -33,24 +34,31 @@ async function fetchBooks(user_id) {
   return books;
 }
 
-app.get("/", async (req, res) => {
-  const user_id = 1; //temporary setting
+async function fetchUsers() {
+  const result = await db.query("SELECT * FROM users");
+  var users = [];
+  result.rows.forEach((user) => {
+    users.push(user);
+  });
+  return users;
+}
 
-  const books = await fetchBooks(user_id);
+app.get("/", async (req, res) => {
+  const books = await fetchBooks(currentUserId);
+  const users = await fetchUsers();
+  username = users[currentUserId - 1].name;
 
   console.log(books);
 
   res.render("index.ejs", {
-    title: user,
+    title: username,
     books: books,
+    users: users,
   });
 });
 
 app.post("/api/search", async (req, res) => {
-  const user_id = 1; //temporary setting
-
   const q = req.body.q;
-  const books = await fetchBooks(user_id);
 
   try {
     const searchBy = "q";
@@ -76,16 +84,14 @@ app.post("/api/search", async (req, res) => {
     console.log(coverIds);
 
     res.render("index.ejs", {
-      title: user,
-      books: books,
+      title: username,
       coverIds: coverIds,
     });
   } catch (error) {
     console.log(error);
 
     res.render("index.ejs", {
-      title: user,
-      books: books,
+      title: username,
       error: "Cannot find covers. Type another title.",
     });
   }
@@ -98,21 +104,19 @@ app.post("/book/add", async (req, res) => {
   const notes = req.body.notes;
   const date = req.body.date;
 
-  const user_id = 1; //temporary setting
-
   try {
     await db.query(
       "INSERT INTO books (cover_id, title, author, notes, date_read, user_id) VALUES ($1, $2, $3, $4, $5, $6)",
-      [coverId, title, author, notes, date, user_id]
+      [coverId, title, author, notes, date, currentUserId]
     );
 
     res.redirect("/");
   } catch (error) {
     console.log(error);
-    const books = await fetchBooks(user_id);
+    const books = await fetchBooks(currentUserId);
 
     res.render("index.ejs", {
-      title: user,
+      title: username,
       books: books,
       error: "Error saving data. Try again.",
     });
@@ -126,8 +130,6 @@ app.post("/book/edit/:id", async (req, res) => {
   const updatedNotes = req.body.updatedNotes;
   const updatedDate = req.body.updatedDate;
 
-  const user_id = 1; //temporary setting
-
   try {
     await db.query(
       "UPDATE books SET title = $1, author = $2, notes = $3, date_read = $4 WHERE books.id = $5",
@@ -137,10 +139,10 @@ app.post("/book/edit/:id", async (req, res) => {
     res.redirect("/");
   } catch (error) {
     console.log(error);
-    const books = await fetchBooks(user_id);
+    const books = await fetchBooks(currentUserId);
 
     res.render("index.ejs", {
-      title: user,
+      title: username,
       books: books,
       error: "Error saving data. Try again.",
     });
@@ -150,21 +152,50 @@ app.post("/book/edit/:id", async (req, res) => {
 app.post("/book/delete/:id", async (req, res) => {
   const deletedBookId = req.params.id;
 
-  const user_id = 1; //temporary setting
-
   try {
     await db.query("DELETE FROM books WHERE books.id = $1", [deletedBookId]);
 
     res.redirect("/");
   } catch (error) {
     console.log(error);
-    const books = await fetchBooks(user_id);
+    const books = await fetchBooks(currentUserId);
 
     res.render("index.ejs", {
-      title: user,
+      title: username,
       error: "Error deleting data, try again.",
       books: books,
     });
+  }
+});
+
+app.post("/user", async (req, res) => {
+  currentUserId = req.body.user;
+
+  const users = await fetchUsers();
+  const books = await fetchBooks(currentUserId);
+  username = users[currentUserId - 1].name;
+
+  console.log(books);
+
+  res.render("index.ejs", {
+    title: username,
+    books: books,
+    users: users,
+  });
+});
+
+app.post("/user/add", async (req, res) => {
+  try {
+    const lastId = await db.query(
+      "INSERT INTO users (name, color) VALUES ($1, $2) RETURNING id",
+      [req.body.name, req.body.color]
+    );
+
+    currentUserId = lastId.rows[0].id;
+
+    res.redirect("/");
+  } catch (err) {
+    console.log(err);
   }
 });
 

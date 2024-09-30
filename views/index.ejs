@@ -7,11 +7,88 @@
     <title>Book notes | <%=title %></title>
   </head>
   <body>
-    <h1>Books I’ve read</h1>
-    <% if (locals.error) {%>
+    <h1>Books we’ve read</h1>
+
+    <% if (locals.error){%>
     <p class="error"><%= error %></p>
     <% } %>
-    <button id="addBtn" onclick="createNewBook()">+</button>
+    <!-- Users list -->
+    <div>
+      <% if (locals.users){ %>
+      <div class="container" id="users">
+        <h2>Who's making notes?</h2>
+        <div class="usersList">
+          <form method="POST" action="/user">
+            <% if(locals.users){ %> <% for(user of users){ %>
+            <input
+              type="submit"
+              name="user"
+              value="<%= user.id %>"
+              id="<%= user.id %>"
+              class="inputHidden"
+            />
+            <label
+              for="<%= user.id %>"
+              style="background-color: <%= user.color %>"
+              class="tile"
+            >
+              <%= user.name %>
+            </label>
+            <% } %> <% } %>
+          </form>
+
+          <button id="newUserBtn" class="tile" onclick="openUserForm()">
+            + user
+          </button>
+        </div>
+
+        <!-- Add user form -->
+        <form action="/user/add" method="POST" id="newUserForm" hidden>
+          <p class="user">What's your name?</p>
+          <input type="text" name="name" />
+
+          <p class="user">Pick a color:</p>
+          <input type="radio" name="color" id="red" value="red" />
+          <label for="red"><span class="red"></span></label>
+
+          <input type="radio" name="color" id="green" value="green" />
+          <label for="green"><span class="green"></span></label>
+
+          <input type="radio" name="color" id="yellow" value="yellow" />
+          <label for="yellow"><span class="yellow"></span></label>
+
+          <input type="radio" name="color" id="olive" value="olive" />
+          <label for="olive"><span class="olive"></span></label>
+
+          <input type="radio" name="color" id="orange" value="orange" />
+          <label for="orange"><span class="orange"></span></label>
+
+          <input type="radio" name="color" id="teal" value="indigo" />
+          <label for="teal"><span class="teal"></span></label>
+
+          <input type="radio" name="color" id="blue" value="blue" />
+          <label for="blue"><span class="blue"></span></label>
+
+          <input type="radio" name="color" id="violet" value="violet" />
+          <label for="violet"><span class="violet"></span></label>
+
+          <input type="radio" name="color" id="purple" value="purple" />
+          <label for="purple"><span class="purple"></span></label>
+
+          <input type="radio" name="color" id="pink" value="pink" />
+          <label for="pink"><span class="pink"></span></label>
+          <div class="spacer"></div>
+          <button type="submit">Add</button>
+          <a href="/" class="">Back</a>
+        </form>
+        <!-- end Add user form -->
+      </div>
+      <% } %>
+    </div>
+    <!-- end Users list -->
+    <!-- Add new book -->
+    <button id="addBtn" onclick="createNewBook()">+ Book</button>
+
     <div>
       <div id="newCover" hidden>
         <h2>Search book cover:</h2>
@@ -20,7 +97,7 @@
           <input type="text" name="q" placeholder="e.g. Jurassic Park" />
           <button type="submit">Search</button>
         </form>
-        <!-- Search cover form -->
+        <!-- end Search cover form -->
       </div>
       <div class="">
         <!-- Add book form -->
@@ -50,94 +127,102 @@
             <input type="date" name="date" placeholder="Date" required />
 
             <button type="submit">Add book</button>
-            <a href="/" class="">Delete</a>
+            <a href="/" class="">Back</a>
           </div>
           <% } %>
         </form>
         <!-- end Add book form -->
       </div>
     </div>
-    <hr />
+    <!-- end Add new book -->
+    <!-- Books list -->
     <div>
-      <% if(locals.books){ %> <% for(book of books){ %>
-      <div class="bookBox">
-        <div id="bookData<%=book.id%>">
-          <p><%= book.id %></p>
-          <p><%= book.title %></p>
-          <p><%= book.author %></p>
-          <p><%= book.date %></p>
-          <p><%= book.notes %></p>
-        </div>
-        <!-- Edit book data form -->
-        <form
-          method="POST"
-          action="/book/edit/<%=book.id%>"
-          id="editForm<%=book.id%>"
-          hidden
-        >
-          <input
-            id="editTitle<%=book.id%>"
-            class="bookData"
-            type="text"
-            name="updatedTitle"
-            value="<%= book.title %>"
-            autocomplete="off"
-          />
-          <input
-            id="editAuthor<%=book.id%>"
-            class="bookData"
-            type="text"
-            name="updatedAuthor"
-            value="<%= book.author %>"
-            autocomplete="off"
-          />
-          <input
-            id="editDate<%=book.id%>"
-            class="bookData"
-            type="date"
-            name="updatedDate"
-            value="<%= book.date %>"
-            autocomplete="off"
-          />
-          <input
-            id="editNotes<%=book.id%>"
-            class="bookData"
-            type="text"
-            name="updatedNotes"
-            value="<%= book.notes %>"
-            autocomplete="off"
-          />
-          <button id="doneBtn<%=book.id%>" class="edit" type="submit">
-            Done
+      <% if (locals.users){ %>
+      <div>
+        <% if(locals.books){ %> <% for(book of books){ %>
+        <div class="booksList">
+          <div id="bookData<%=book.id%>">
+            <p><%= book.id %></p>
+            <p><%= book.title %></p>
+            <p><%= book.author %></p>
+            <p><%= book.date %></p>
+            <p><%= book.notes %></p>
+          </div>
+          <!-- Edit book data form -->
+          <form
+            method="POST"
+            action="/book/edit/<%=book.id%>"
+            id="editForm<%=book.id%>"
+            hidden
+          >
+            <input
+              id="editTitle<%=book.id%>"
+              class="bookData"
+              type="text"
+              name="updatedTitle"
+              value="<%= book.title %>"
+              autocomplete="off"
+            />
+            <input
+              id="editAuthor<%=book.id%>"
+              class="bookData"
+              type="text"
+              name="updatedAuthor"
+              value="<%= book.author %>"
+              autocomplete="off"
+            />
+            <input
+              id="editDate<%=book.id%>"
+              class="bookData"
+              type="date"
+              name="updatedDate"
+              value="<%= book.date %>"
+              autocomplete="off"
+            />
+            <input
+              id="editNotes<%=book.id%>"
+              class="bookData"
+              type="text"
+              name="updatedNotes"
+              value="<%= book.notes %>"
+              autocomplete="off"
+            />
+            <button id="doneBtn<%=book.id%>" class="edit" type="submit">
+              Done
+            </button>
+            <a href="/" class="">Back</a>
+          </form>
+          <!-- end Edit data form -->
+          <button
+            id="editBtn<%=book.id%>"
+            class="edit"
+            onclick="editHandler('<%=book.id%>')"
+          >
+            Edit
           </button>
-          <a href="/" class="">Delete</a>
-        </form>
-        <!-- end Edit data form -->
-        <button
-          id="editBtn<%=book.id%>"
-          class="edit"
-          onclick="editHandler('<%=book.id%>')"
-        >
-          Edit
-        </button>
-        <!-- Delete data form -->
-        <form method="POST" action="/book/delete/<%=book.id%>">
-          <button id="deleteBtn<%=book.id%>" class="delete">Delete</button>
-        </form>
-        <!-- end Delete data form -->
-        <% if (book.cover_id) { %>
-        <img src="https://covers.openlibrary.org/b/id/<%=book.cover_id%>.jpg" />
-        <%} else{ %>
-        <img
-          src="/assets/icons/file-person.svg"
-          alt="unknown"
-          class="empty"
-        /><% } %>
+          <!-- Delete data form -->
+          <form method="POST" action="/book/delete/<%=book.id%>">
+            <button id="deleteBtn<%=book.id%>" class="delete">Delete</button>
+          </form>
+          <!-- end Delete data form -->
+          <% if (book.cover_id) { %>
+          <img
+            src="https://covers.openlibrary.org/b/id/<%=book.cover_id%>.jpg"
+          />
+          <%} else{ %>
+          <img
+            src="/assets/icons/file-person.svg"
+            alt="unknown"
+            class="empty"
+          /><% } %>
 
-        <hr />
+          <hr />
+        </div>
+        <% } %> <% } %>
       </div>
-      <% } %> <% } %>
+      <% } %>
     </div>
+    <!-- end Books list -->
 
     <script>
       function handler(id) {
@@ -175,6 +260,11 @@
         document.getElementById("doneBtn" + id).removeAttribute("hidden");
 
         document.getElementById("editForm" + id).removeAttribute("hidden");
+      }
+    </script>
+    <script>
+      function openUserForm() {
+        document.getElementById("newUserForm").removeAttribute("hidden");
       }
     </script>
   </body>
