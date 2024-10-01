@@ -21,7 +21,7 @@ app.use(express.static("public"));
 
 //global variables
 const API_URL = "https://openlibrary.org";
-var currentUserId = 1;
+var currentUserId = 0;
 var username = "";
 
 async function fetchBooks(user_id) {
@@ -236,7 +236,8 @@ app.post("/user/add", async (req, res) => {
       title: username,
       books: books,
       users: users,
-      error: "Error adding user, try again.",
+      error:
+        "Error adding user, try again. Make sure you don't duplicate a name or color.",
     });
   }
 });
