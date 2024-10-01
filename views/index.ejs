@@ -18,8 +18,8 @@
       <div class="container" id="users">
         <h2>Who's making notes?</h2>
         <div class="usersList">
+          <% if (locals.users){ %> <% for (user of users){ %>
           <form method="POST" action="/user">
-            <% if(locals.users){ %> <% for(user of users){ %>
             <input
               type="submit"
               name="user"
@@ -34,8 +34,14 @@
             >
               <%= user.name %>
             </label>
-            <% } %> <% } %>
           </form>
+
+          <!-- Delete user form -->
+          <form method="POST" action="/user/delete/<%=user.id%>">
+            <button id="deleteBtn<%=user.id%>" class="delete">Delete</button>
+          </form>
+          <!-- end Delete user form -->
+          <% } %> <% } %>
 
           <button id="newUserBtn" class="tile" onclick="openUserForm()">
             + user
@@ -79,7 +85,7 @@
           <label for="pink"><span class="pink"></span></label>
           <div class="spacer"></div>
           <button type="submit">Add</button>
-          <a href="/" class="">Back</a>
+          <a href="/user" class="">Back</a>
         </form>
         <!-- end Add user form -->
       </div>
@@ -87,7 +93,9 @@
     </div>
     <!-- end Users list -->
     <!-- Add new book -->
+    <% if (locals.books){ %>
     <button id="addBtn" onclick="createNewBook()">+ Book</button>
+    <% } %>
 
     <div>
       <div id="newCover" hidden>
@@ -106,7 +114,7 @@
 
           <% if (locals.coverIds && coverIds.length > 0){ %>
           <h2>Choose one from the available covers:</h2>
-          <% for(coverId of coverIds){ %>
+          <% for (coverId of coverIds){ %>
           <img
             onclick="handler('<%= coverId %>')"
             id="cover<%= coverId %>"
@@ -127,7 +135,7 @@
             <input type="date" name="date" placeholder="Date" required />
 
             <button type="submit">Add book</button>
-            <a href="/" class="">Back</a>
+            <a href="/user" class="">Back</a>
           </div>
           <% } %>
         </form>
@@ -139,7 +147,7 @@
     <div>
       <% if (locals.users){ %>
       <div>
-        <% if(locals.books){ %> <% for(book of books){ %>
+        <% if (locals.books){ %> <% for (book of books){ %>
         <div class="booksList">
           <div id="bookData<%=book.id%>">
             <p><%= book.id %></p>
@@ -190,7 +198,7 @@
             <button id="doneBtn<%=book.id%>" class="edit" type="submit">
               Done
             </button>
-            <a href="/" class="">Back</a>
+            <a href="/user" class="">Back</a>
           </form>
           <!-- end Edit data form -->
           <button
@@ -227,7 +235,7 @@
     <script>
       function handler(id) {
         const convertedIds =
-          "<% if(locals.coverIds){%><%= coverIds %><%}%>".split(",");
+          "<% if (locals.coverIds){%><%= coverIds %><%}%>".split(",");
 
         var choosenCover = document.getElementById("cover" + id);
         choosenCover.classList.add("frame");

@@ -19,8 +19,8 @@ db.connect();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
+//global variables
 const API_URL = "https://openlibrary.org";
-
 var currentUserId = 1;
 var username = "";
 
@@ -44,15 +44,11 @@ async function fetchUsers() {
 }
 
 app.get("/", async (req, res) => {
-  const books = await fetchBooks(currentUserId);
   const users = await fetchUsers();
-  username = users[currentUserId - 1].name;
-
-  console.log(books);
+  username = "Welcome";
 
   res.render("index.ejs", {
     title: username,
-    books: books,
     users: users,
   });
 });
@@ -81,7 +77,6 @@ app.post("/api/search", async (req, res) => {
     }
 
     coverIds = allCoverIds.filter((coverId) => coverId !== undefined);
-    console.log(coverIds);
 
     res.render("index.ejs", {
       title: username,
@@ -110,13 +105,16 @@ app.post("/book/add", async (req, res) => {
       [coverId, title, author, notes, date, currentUserId]
     );
 
-    res.redirect("/");
+    res.redirect("/user");
   } catch (error) {
     console.log(error);
+
+    const users = await fetchUsers();
     const books = await fetchBooks(currentUserId);
 
     res.render("index.ejs", {
       title: username,
+      users: users,
       books: books,
       error: "Error saving data. Try again.",
     });
@@ -136,13 +134,16 @@ app.post("/book/edit/:id", async (req, res) => {
       [updatedTitle, updatedAuthor, updatedNotes, updatedDate, updatedBookId]
     );
 
-    res.redirect("/");
+    res.redirect("/user");
   } catch (error) {
     console.log(error);
+
+    const users = await fetchUsers();
     const books = await fetchBooks(currentUserId);
 
     res.render("index.ejs", {
       title: username,
+      users: users,
       books: books,
       error: "Error saving data. Try again.",
     });
@@ -155,27 +156,40 @@ app.post("/book/delete/:id", async (req, res) => {
   try {
     await db.query("DELETE FROM books WHERE books.id = $1", [deletedBookId]);
 
-    res.redirect("/");
+    res.redirect("/user");
   } catch (error) {
     console.log(error);
-    const books = await fetchBooks(currentUserId);
+
+    const users = await fetchUsers();
+    const books = await usersBooks(currentUserId);
 
     res.render("index.ejs", {
       title: username,
-      error: "Error deleting data, try again.",
+      users: users,
       books: books,
+      error: "Error deleting data, try again.",
     });
   }
 });
 
+app.get("/user", async (req, res) => {
+  const users = await fetchUsers();
+  const books = await fetchBooks(currentUserId);
+
+  res.render("index.ejs", {
+    title: username,
+    books: books,
+    users: users,
+  });
+});
+
 app.post("/user", async (req, res) => {
-  currentUserId = req.body.user;
+  currentUserId = parseInt(req.body.user);
 
   const users = await fetchUsers();
   const books = await fetchBooks(currentUserId);
-  username = users[currentUserId - 1].name;
-
-  console.log(books);
+  const user = users.find((user) => user.id === currentUserId);
+  username = user.name;
 
   res.render("index.ejs", {
     title: username,
@@ -186,16 +200,71 @@ app.post("/user", async (req, res) => {
 
 app.post("/user/add", async (req, res) => {
   try {
-    const lastId = await db.query(
-      "INSERT INTO users (name, color) VALUES ($1, $2) RETURNING id",
-      [req.body.name, req.body.color]
-    );
+    const users = await fetchUsers();
+    console.log(users.length);
 
-    currentUserId = lastId.rows[0].id;
+    if (users.length < 5) {
+      const lastId = await db.query(
+        "INSERT INTO users (name, color) VALUES ($1, $2) RETURNING id",
+        [req.body.name, req.body.color]
+      );
+
+      currentUserId = parseInt(lastId.rows[0].id);
+
+      const users = await fetchUsers();
+      const user = users.find((user) => user.id === currentUserId);
+      username = user.name;
+
+      res.redirect("/user");
+    } else {
+      const users = await fetchUsers();
+
+      res.render("index.ejs", {
+        title: username,
+        users: users,
+        error:
+          "Unfortunately family is full. To add a new member, please remove one of the current members.",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+
+    const users = await fetchUsers();
+    const books = await fetchBooks(currentUserId);
+
+    res.render("index.ejs", {
+      title: username,
+      books: books,
+      users: users,
+      error: "Error adding user, try again.",
+    });
+  }
+});
+
+app.post("/user/delete/:id", async (req, res) => {
+  const deletedUserId = req.params.id;
+
+  try {
+    await db.query("DELETE FROM books WHERE books.user_id = $1", [
+      deletedUserId,
+    ]);
+    await db.query("DELETE FROM users WHERE users.id = $1", [deletedUserId]);
+
+    username = "Welcome";
 
     res.redirect("/");
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.log(error);
+
+    const users = await fetchUsers();
+    const books = await fetchBooks(currentUserId);
+
+    res.render("index.ejs", {
+      title: username,
+      books: books,
+      users: users,
+      error: "Error deleting user, try again.",
+    });
   }
 });
 
