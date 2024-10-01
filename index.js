@@ -200,18 +200,32 @@ app.post("/user", async (req, res) => {
 
 app.post("/user/add", async (req, res) => {
   try {
-    const lastId = await db.query(
-      "INSERT INTO users (name, color) VALUES ($1, $2) RETURNING id",
-      [req.body.name, req.body.color]
-    );
-
-    currentUserId = parseInt(lastId.rows[0].id);
-
     const users = await fetchUsers();
-    const user = users.find((user) => user.id === currentUserId);
-    username = user.name;
+    console.log(users.length);
 
-    res.redirect("/user");
+    if (users.length < 5) {
+      const lastId = await db.query(
+        "INSERT INTO users (name, color) VALUES ($1, $2) RETURNING id",
+        [req.body.name, req.body.color]
+      );
+
+      currentUserId = parseInt(lastId.rows[0].id);
+
+      const users = await fetchUsers();
+      const user = users.find((user) => user.id === currentUserId);
+      username = user.name;
+
+      res.redirect("/user");
+    } else {
+      const users = await fetchUsers();
+
+      res.render("index.ejs", {
+        title: username,
+        users: users,
+        error:
+          "Unfortunately family is full. To add a new member, please remove one of the current members.",
+      });
+    }
   } catch (error) {
     console.log(error);
 
