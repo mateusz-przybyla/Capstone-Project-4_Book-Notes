@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/styles/main.css" />
-    <title>Book notes | <%=title %></title>
+    <title>Book notes | <%=title%></title>
   </head>
   <body>
     <h1>Books we’ve read</h1>
@@ -69,7 +69,7 @@
           <input type="radio" name="color" id="orange" value="orange" />
           <label for="orange"><span class="orange"></span></label>
 
-          <input type="radio" name="color" id="teal" value="indigo" />
+          <input type="radio" name="color" id="teal" value="teal" />
           <label for="teal"><span class="teal"></span></label>
 
           <input type="radio" name="color" id="blue" value="blue" />
@@ -93,8 +93,14 @@
     </div>
     <!-- end Users list -->
     <!-- Add new book -->
-    <% if (locals.books){ %>
+    <% if ((locals.books) || (locals.next)){ %>
     <button id="addBtn" onclick="createNewBook()">+ Book</button>
+    <% } %> <% if ((locals.books) && (books.length > 0)){ %>
+    <form action="/user/sort" method="POST" id="sortForm">
+      <p>Sort by:</p>
+      <button type="submit" name="sortBy" value="dateASC">The oldest</button>
+      <button type="submit" name="sortBy" value="dateDESC">The newest</button>
+    </form>
     <% } %>
 
     <div>
@@ -112,7 +118,7 @@
         <form method="POST" action="/book/add">
           <input type="hidden" id="choosenCover" name="choosenCover" value="" />
 
-          <% if (locals.coverIds && coverIds.length > 0){ %>
+          <% if ((locals.coverIds) && (coverIds.length > 0)){ %>
           <h2>Choose one from the available covers:</h2>
           <% for (coverId of coverIds){ %>
           <img

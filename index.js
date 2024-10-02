@@ -21,16 +21,26 @@ app.use(express.static("public"));
 
 //global variables
 const API_URL = "https://openlibrary.org";
-var currentUserId = 1;
+var currentUserId = 0;
 var username = "";
+var sortBy = "dateDESC";
 
-async function fetchBooks(user_id) {
-  const result = await db.query(
-    "SELECT id, cover_id, title, author, notes, TO_CHAR(date_read, 'yyyy-mm-dd') AS date FROM books WHERE user_id = $1",
-    [user_id]
-  );
+async function fetchBooks(user_id, sortBy) {
+  var result = "";
+
+  if (sortBy === "dateASC") {
+    result = await db.query(
+      "SELECT id, cover_id, title, author, notes, TO_CHAR(date_read, 'yyyy-mm-dd') AS date FROM books WHERE user_id = $1 ORDER BY date ASC",
+      [user_id]
+    );
+  } else if (sortBy === "dateDESC") {
+    result = await db.query(
+      "SELECT id, cover_id, title, author, notes, TO_CHAR(date_read, 'yyyy-mm-dd') AS date FROM books WHERE user_id = $1 ORDER BY date DESC",
+      [user_id]
+    );
+  }
+
   const books = result.rows;
-
   return books;
 }
 
@@ -87,6 +97,7 @@ app.post("/api/search", async (req, res) => {
 
     res.render("index.ejs", {
       title: username,
+      next: "true",
       error: "Cannot find covers. Type another title.",
     });
   }
@@ -110,7 +121,7 @@ app.post("/book/add", async (req, res) => {
     console.log(error);
 
     const users = await fetchUsers();
-    const books = await fetchBooks(currentUserId);
+    const books = await fetchBooks(currentUserId, sortBy);
 
     res.render("index.ejs", {
       title: username,
@@ -139,7 +150,7 @@ app.post("/book/edit/:id", async (req, res) => {
     console.log(error);
 
     const users = await fetchUsers();
-    const books = await fetchBooks(currentUserId);
+    const books = await fetchBooks(currentUserId, sortBy);
 
     res.render("index.ejs", {
       title: username,
@@ -161,7 +172,7 @@ app.post("/book/delete/:id", async (req, res) => {
     console.log(error);
 
     const users = await fetchUsers();
-    const books = await usersBooks(currentUserId);
+    const books = await fetchBooks(currentUserId, sortBy);
 
     res.render("index.ejs", {
       title: username,
@@ -174,7 +185,7 @@ app.post("/book/delete/:id", async (req, res) => {
 
 app.get("/user", async (req, res) => {
   const users = await fetchUsers();
-  const books = await fetchBooks(currentUserId);
+  const books = await fetchBooks(currentUserId, sortBy);
 
   res.render("index.ejs", {
     title: username,
@@ -187,9 +198,22 @@ app.post("/user", async (req, res) => {
   currentUserId = parseInt(req.body.user);
 
   const users = await fetchUsers();
-  const books = await fetchBooks(currentUserId);
+  const books = await fetchBooks(currentUserId, sortBy);
   const user = users.find((user) => user.id === currentUserId);
   username = user.name;
+
+  res.render("index.ejs", {
+    title: username,
+    books: books,
+    users: users,
+  });
+});
+
+app.post("/user/sort", async (req, res) => {
+  sortBy = req.body.sortBy;
+
+  const users = await fetchUsers();
+  const books = await fetchBooks(currentUserId, sortBy);
 
   res.render("index.ejs", {
     title: username,
@@ -230,13 +254,14 @@ app.post("/user/add", async (req, res) => {
     console.log(error);
 
     const users = await fetchUsers();
-    const books = await fetchBooks(currentUserId);
+    const books = await fetchBooks(currentUserId, sortBy);
 
     res.render("index.ejs", {
       title: username,
       books: books,
       users: users,
-      error: "Error adding user, try again.",
+      error:
+        "Error adding user, try again. Make sure you don't duplicate a name or color.",
     });
   }
 });
@@ -257,7 +282,7 @@ app.post("/user/delete/:id", async (req, res) => {
     console.log(error);
 
     const users = await fetchUsers();
-    const books = await fetchBooks(currentUserId);
+    const books = await fetchBooks(currentUserId, sortBy);
 
     res.render("index.ejs", {
       title: username,
