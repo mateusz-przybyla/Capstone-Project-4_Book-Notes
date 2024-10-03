@@ -60,6 +60,7 @@ app.get("/", async (req, res) => {
   res.render("index.ejs", {
     title: username,
     users: users,
+    isUserVerify: "false",
   });
 });
 
@@ -97,7 +98,7 @@ app.post("/api/search", async (req, res) => {
 
     res.render("index.ejs", {
       title: username,
-      next: "true",
+      isUserVerify: "true",
       error: "Cannot find covers. Type another title.",
     });
   }
@@ -127,6 +128,7 @@ app.post("/book/add", async (req, res) => {
       title: username,
       users: users,
       books: books,
+      isUserVerify: "true",
       error: "Error saving data. Try again.",
     });
   }
@@ -156,6 +158,7 @@ app.post("/book/edit/:id", async (req, res) => {
       title: username,
       users: users,
       books: books,
+      isUserVerify: "true",
       error: "Error saving data. Try again.",
     });
   }
@@ -178,6 +181,7 @@ app.post("/book/delete/:id", async (req, res) => {
       title: username,
       users: users,
       books: books,
+      isUserVerify: "true",
       error: "Error deleting data, try again.",
     });
   }
@@ -191,6 +195,7 @@ app.get("/user", async (req, res) => {
     title: username,
     books: books,
     users: users,
+    isUserVerify: "true",
   });
 });
 
@@ -206,6 +211,7 @@ app.post("/user", async (req, res) => {
     title: username,
     books: books,
     users: users,
+    isUserVerify: "true",
   });
 });
 
@@ -219,6 +225,7 @@ app.post("/user/sort", async (req, res) => {
     title: username,
     books: books,
     users: users,
+    isUserVerify: "true",
   });
 });
 
@@ -246,6 +253,7 @@ app.post("/user/add", async (req, res) => {
       res.render("index.ejs", {
         title: username,
         users: users,
+        isUserVerify: "false",
         error:
           "Unfortunately family is full. To add a new member, please remove one of the current members.",
       });
@@ -258,8 +266,8 @@ app.post("/user/add", async (req, res) => {
 
     res.render("index.ejs", {
       title: username,
-      books: books,
       users: users,
+      isUserVerify: "false",
       error:
         "Error adding user, try again. Make sure you don't duplicate a name or color.",
     });
@@ -288,6 +296,7 @@ app.post("/user/delete/:id", async (req, res) => {
       title: username,
       books: books,
       users: users,
+      isUserVerify: "true",
       error: "Error deleting user, try again.",
     });
   }

@@ -7,7 +7,7 @@
     <title>Book notes | <%=title%></title>
   </head>
   <body>
-    <h1>Books we’ve read</h1>
+    <h1 class="headerMain">Books we’ve read</h1>
 
     <% if (locals.error){%>
     <p class="error"><%= error %></p>
@@ -16,42 +16,47 @@
     <div>
       <% if (locals.users){ %>
       <div class="container" id="users">
-        <h2>Who's making notes?</h2>
+        <h2 class="header">Who's making notes?</h2>
         <div class="usersList">
           <% if (locals.users){ %> <% for (user of users){ %>
-          <form method="POST" action="/user">
-            <input
-              type="submit"
-              name="user"
-              value="<%= user.id %>"
-              id="<%= user.id %>"
-              class="inputHidden"
-            />
-            <label
-              for="<%= user.id %>"
-              style="background-color: <%= user.color %>"
-              class="tile"
-            >
-              <%= user.name %>
-            </label>
-          </form>
+          <div class="user">
+            <form method="POST" action="/user">
+              <input
+                type="submit"
+                name="user"
+                value="<%= user.id %>"
+                id="<%= user.id %>"
+                class="inputHidden"
+              />
+              <label
+                for="<%= user.id %>"
+                style="background-color: <%= user.color %>"
+                class="tile"
+              >
+                <p><%= user.name %></p>
+              </label>
+            </form>
 
-          <!-- Delete user form -->
-          <form method="POST" action="/user/delete/<%=user.id%>">
-            <button id="deleteBtn<%=user.id%>" class="delete">Delete</button>
-          </form>
-          <!-- end Delete user form -->
+            <!-- Delete user form -->
+            <form method="POST" action="/user/delete/<%=user.id%>">
+              <button id="deleteBtn<%=user.id%>" class="btn deleteBtn">
+                x
+              </button>
+            </form>
+            <!-- end Delete user form -->
+          </div>
           <% } %> <% } %>
 
-          <button id="newUserBtn" class="tile" onclick="openUserForm()">
-            + user
+          <button class="tile newUserBtn" onclick="openUserForm()">
+            <p>+</p>
           </button>
         </div>
 
         <!-- Add user form -->
         <form action="/user/add" method="POST" id="newUserForm" hidden>
+          <hr class="userHr" />
           <p class="user">What's your name?</p>
-          <input type="text" name="name" />
+          <input type="text" name="name" required />
 
           <p class="user">Pick a color:</p>
           <input type="radio" name="color" id="red" value="red" />
@@ -84,8 +89,9 @@
           <input type="radio" name="color" id="pink" value="pink" />
           <label for="pink"><span class="pink"></span></label>
           <div class="spacer"></div>
-          <button type="submit">Add</button>
-          <a href="/user" class="">Back</a>
+          <button type="submit" class="btn addUserBtn">Add</button>
+
+          <a href="/user" class="btn btnBack">Back</a>
         </form>
         <!-- end Add user form -->
       </div>
@@ -93,14 +99,36 @@
     </div>
     <!-- end Users list -->
     <!-- Add new book -->
-    <% if ((locals.books) || (locals.next)){ %>
-    <button id="addBtn" onclick="createNewBook()">+ Book</button>
-    <% } %> <% if ((locals.books) && (books.length > 0)){ %>
-    <form action="/user/sort" method="POST" id="sortForm">
-      <p>Sort by:</p>
-      <button type="submit" name="sortBy" value="dateASC">The oldest</button>
-      <button type="submit" name="sortBy" value="dateDESC">The newest</button>
-    </form>
+    <div id="optionsBox" class="optionsBox">
+      <% if (locals.isUserVerify === "true"){ %>
+      <button id="addBookBtn" onclick="createNewBook()" class="btn addBookBtn">
+        + Book
+      </button>
+      <% } %> <% if ((locals.books) && (books.length > 0)){ %>
+      <form action="/user/sort" method="POST" id="sortForm" class="sortForm">
+        <p>Sort by:</p>
+        <button
+          type="submit"
+          name="sortBy"
+          value="dateASC"
+          class="btn sortBookBtn"
+        >
+          The oldest
+        </button>
+        <button
+          type="submit"
+          name="sortBy"
+          value="dateDESC"
+          class="btn sortBookBtn"
+        >
+          The newest
+        </button>
+      </form>
+      <% } %>
+    </div>
+
+    <% if (locals.isUserVerify === "true"){ %>
+    <hr class="bookHr" />
     <% } %>
 
     <div>
@@ -261,18 +289,17 @@
     </script>
     <script>
       function createNewBook() {
-        document.getElementById("addBtn").setAttribute("hidden", true);
         document.getElementById("newCover").removeAttribute("hidden");
       }
     </script>
     <script>
       function editHandler(id) {
-        document.getElementById("addBtn").setAttribute("hidden", true);
         document.getElementById("bookData" + id).setAttribute("hidden", true);
 
+        document.getElementById("deleteBtn" + id).setAttribute("hidden", true);
         document.getElementById("editBtn" + id).setAttribute("hidden", true);
-        document.getElementById("doneBtn" + id).removeAttribute("hidden");
 
+        document.getElementById("doneBtn" + id).removeAttribute("hidden");
         document.getElementById("editForm" + id).removeAttribute("hidden");
       }
     </script>
