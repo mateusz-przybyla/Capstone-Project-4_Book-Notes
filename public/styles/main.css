@@ -1,29 +1,107 @@
 body {
   text-align: center;
-  background-color: peachpuff;
+  background-color: #282a3a;
+  font-family: "Roboto", sans-serif;
 }
 
 .container {
-  background-color: black;
-  padding: 20px;
+  background-color: #000000;
+  padding: 30px;
+  border-radius: 20px;
+  margin-bottom: 30px;
 }
 
 .usersList {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: top;
   gap: 50px;
-  height: 100px;
+  height: 160px;
   max-width: 100%;
+}
+
+.user {
+  display: flex;
+  flex-direction: column;
+  justify-content: top;
+  align-items: center;
+  gap: 15px;
+}
+
+/* buttons */
+
+.btn {
+  border-radius: 5px;
+  cursor: pointer;
+  color: #fff;
+  display: inline-block;
+  border: none;
+  font-size: 16px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+}
+
+.btn.deleteBtn {
+  background-color: #dc3545;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.btn.addUserBtn {
+  background-color: green;
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+.btn.btnBack {
+  margin-left: 10px;
+}
+
+.btn.addBookBtn {
+  background-color: green;
+  font-size: 16px;
+}
+
+.btn.sortBookBtn {
+  background-color: transparent;
+  text-decoration: underline;
+  font-size: 16px;
 }
 
 /* -user- tiles */
 
 .tile {
   display: inline-block;
-  height: 100px;
-  width: 100px;
+  height: 120px;
+  width: 120px;
   cursor: pointer;
+  border-radius: 10px;
+  margin: 0;
+}
+
+.tile p {
+  margin-top: 50px;
+  color: #fff;
+  font-weight: 600;
+}
+
+.tile.newUserBtn {
+  background-color: #282a3a;
+  border: 0;
+}
+
+.tile.newUserBtn p {
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: 30px;
 }
 
 .tile:hover {
@@ -34,18 +112,67 @@ body {
   display: none;
 }
 
+input[type="text"] {
+  text-align: left;
+  height: 40px;
+  top: 10px;
+  border: 1px solid #c69749;
+  background: transparent;
+  border-radius: 5px;
+  font-size: 16px;
+  width: 50%;
+  max-width: 275px;
+  color: #c69749;
+}
+
+input[type="text"]:focus {
+  outline: none;
+  box-shadow: inset 0 -3px 0 0 #c69749;
+}
+
+.userHr {
+  border: 1px solid #c69749;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+.bookHr {
+  border: 1px solid #c69749;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  margin-left: 25%;
+  margin-right: 25%;
+}
+
+.spacer {
+  margin-bottom: 20px;
+}
+
+.optionsBox {
+  width: 540px;
+  margin: auto;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
 img {
   height: 295px;
   width: 180px;
+  border-radius: 10px;
 }
 
 h1,
-h2 {
-  color: darkcyan;
+h2,
+p {
+  color: #c69749;
 }
 
-.user {
-  color: darkcyan;
+h2.header {
+  margin-top: 0;
+  margin-bottom: 30px;
 }
 
 .frame {
