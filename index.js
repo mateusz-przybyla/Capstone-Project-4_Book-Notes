@@ -269,7 +269,7 @@ app.post("/user/add", async (req, res) => {
       users: users,
       isUserVerify: "false",
       error:
-        "Error adding user, try again. Make sure you don't duplicate a name or color.",
+        "Error adding user, try again. Make sure you don't duplicate a color.",
     });
   }
 });
