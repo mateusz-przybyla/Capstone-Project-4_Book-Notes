@@ -45,11 +45,11 @@
             </form>
             <!-- end Delete user form -->
           </div>
-          <% } %> <% } %>
-
+          <% } %> <% } %> <% if (users.length < 5){%>
           <button class="tile newUserBtn" onclick="openUserForm()">
             <p>+</p>
           </button>
+          <% } %>
         </div>
 
         <!-- Add user form -->
