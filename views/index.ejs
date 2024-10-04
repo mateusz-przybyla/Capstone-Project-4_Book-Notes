@@ -7,7 +7,7 @@
     <title>Book notes | <%=title%></title>
   </head>
   <body>
-    <h1 class="headerMain">Books we’ve read</h1>
+    <h1 class="">Books we’ve read</h1>
 
     <% if (locals.error){%>
     <p class="error"><%= error %></p>
@@ -56,7 +56,7 @@
         <form action="/user/add" method="POST" id="newUserForm" hidden>
           <hr class="userHr" />
           <p class="user">What's your name?</p>
-          <input type="text" name="name" required />
+          <input type="text" name="name" class="userInput" required />
 
           <p class="user">Pick a color:</p>
           <input type="radio" name="color" id="red" value="red" />
@@ -128,18 +128,19 @@
     </div>
 
     <% if (locals.isUserVerify === "true"){ %>
-    <hr class="bookHr" />
+    <hr class="optionsHr" />
     <% } %>
 
     <div>
-      <div id="newCover" hidden>
+      <div id="newCover" class="newCover" hidden>
         <h2>Search book cover:</h2>
         <!-- Search cover form -->
         <form method="POST" action="/api/search">
           <input type="text" name="q" placeholder="e.g. Jurassic Park" />
-          <button type="submit">Search</button>
+          <button type="submit" class="btn searchBookBtn">Search</button>
         </form>
         <!-- end Search cover form -->
+        <hr class="optionsHr" />
       </div>
       <div class="">
         <!-- Add book form -->
@@ -147,6 +148,7 @@
           <input type="hidden" id="choosenCover" name="choosenCover" value="" />
 
           <% if ((locals.coverIds) && (coverIds.length > 0)){ %>
+          <hr class="userHr" />
           <h2>Choose one from the available covers:</h2>
           <% for (coverId of coverIds){ %>
           <img
@@ -157,19 +159,40 @@
           />
           <% } %> <br />
           <div class="newBookBox">
-            <input type="text" name="title" placeholder="Title" required />
-            <input type="text" name="author" placeholder="Author" required />
+            <input
+              type="text"
+              name="title"
+              placeholder="Title"
+              class="coverInput"
+              required
+            />
+            <input
+              type="text"
+              name="author"
+              placeholder="Author"
+              class="coverInput"
+              required
+            />
             <textarea
               type="text"
               name="notes"
               placeholder="Notes"
-              rows="3"
+              rows="5"
+              class="coverInput"
               required
             ></textarea>
-            <input type="date" name="date" placeholder="Date" required />
+            <input
+              type="date"
+              id="date"
+              name="date"
+              placeholder="Date"
+              class="coverInput"
+              required
+            />
 
-            <button type="submit">Add book</button>
-            <a href="/user" class="">Back</a>
+            <button type="submit" class="btn addCoverBtn">Add book</button>
+
+            <a href="/user" class="btn btnBack">Back</a>
           </div>
           <% } %>
         </form>
@@ -181,15 +204,8 @@
     <div>
       <% if (locals.users){ %>
       <div>
-        <% if (locals.books){ %> <% for (book of books){ %>
+        <% if (locals.books){ for (book of books) {%>
         <div class="booksList">
-          <div id="bookData<%=book.id%>">
-            <p><%= book.id %></p>
-            <p><%= book.title %></p>
-            <p><%= book.author %></p>
-            <p><%= book.date %></p>
-            <p><%= book.notes %></p>
-          </div>
           <!-- Edit book data form -->
           <form
             method="POST"
@@ -221,46 +237,77 @@
               value="<%= book.date %>"
               autocomplete="off"
             />
-            <input
+            <textarea
               id="editNotes<%=book.id%>"
               class="bookData"
               type="text"
               name="updatedNotes"
-              value="<%= book.notes %>"
+              rows="5"
               autocomplete="off"
-            />
-            <button id="doneBtn<%=book.id%>" class="edit" type="submit">
+            >
+<%= book.notes %></textarea
+            >
+            <button
+              id="doneBtn<%=book.id%>"
+              class="btn doneEditBookBtn"
+              type="submit"
+            >
               Done
             </button>
-            <a href="/user" class="">Back</a>
+            <a href="/user" class="btn btnBack">Back</a>
           </form>
           <!-- end Edit data form -->
-          <button
-            id="editBtn<%=book.id%>"
-            class="edit"
-            onclick="editHandler('<%=book.id%>')"
-          >
-            Edit
-          </button>
-          <!-- Delete data form -->
-          <form method="POST" action="/book/delete/<%=book.id%>">
-            <button id="deleteBtn<%=book.id%>" class="delete">Delete</button>
-          </form>
-          <!-- end Delete data form -->
-          <% if (book.cover_id) { %>
-          <img
-            src="https://covers.openlibrary.org/b/id/<%=book.cover_id%>.jpg"
-          />
-          <%} else{ %>
-          <img
-            src="/assets/icons/file-person.svg"
-            alt="unknown"
-            class="empty"
-          /><% } %>
 
-          <hr />
+          <div id="bookData<%=book.id%>">
+            <div class="bookWidget">
+              <% if (book.cover_id) { %>
+              <img
+                src="https://covers.openlibrary.org/b/id/<%=book.cover_id%>.jpg"
+              />
+              <%} else{ %>
+              <img
+                src="/assets/icons/file-person.svg"
+                alt="unknown"
+                class="empty"
+              /><% } %>
+
+              <div class="bookDescription">
+                <p class="bookTitle"><%= book.title %></p>
+                <p class="bookAuthor">
+                  <span class="text">by</span> <%= book.author %>
+                </p>
+                <p>Date read: <%= book.date %></p>
+                <p>Notes:</p>
+              </div>
+            </div>
+
+            <p class="bookNotes"><%= book.notes %></p>
+          </div>
+
+          <div class="bookSettingsBox">
+            <div id="editBtn<%=book.id%>">
+              <button
+                class="btn editBookBtn"
+                onclick="editHandler('<%=book.id%>')"
+              >
+                Edit
+              </button>
+            </div>
+            <!-- Delete data form -->
+            <form
+              method="POST"
+              action="/book/delete/<%=book.id%>"
+              id="deleteBookForm<%=book.id%>"
+            >
+              <button id="deleteBtn<%=book.id%>" class="btn deleteBookBtn">
+                Delete
+              </button>
+            </form>
+            <!-- end Delete data form -->
+          </div>
+          <hr class="bookListHr" />
         </div>
-        <% } %> <% } %>
+        <% }} %>
       </div>
       <% } %>
     </div>
@@ -289,15 +336,17 @@
     </script>
     <script>
       function createNewBook() {
-        document.getElementById("newCover").removeAttribute("hidden");
+        document.getElementById("newCover").toggleAttribute("hidden");
       }
     </script>
     <script>
       function editHandler(id) {
         document.getElementById("bookData" + id).setAttribute("hidden", true);
 
-        document.getElementById("deleteBtn" + id).setAttribute("hidden", true);
         document.getElementById("editBtn" + id).setAttribute("hidden", true);
+        document
+          .getElementById("deleteBookForm" + id)
+          .setAttribute("hidden", true);
 
         document.getElementById("doneBtn" + id).removeAttribute("hidden");
         document.getElementById("editForm" + id).removeAttribute("hidden");
@@ -305,8 +354,13 @@
     </script>
     <script>
       function openUserForm() {
-        document.getElementById("newUserForm").removeAttribute("hidden");
+        document.getElementById("newUserForm").toggleAttribute("hidden");
       }
+    </script>
+    <script>
+      document.getElementById("date").value = new Date()
+        .toISOString()
+        .substring(0, 10);
     </script>
   </body>
 </html>
