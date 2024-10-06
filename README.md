@@ -3,7 +3,8 @@
 Project idea:\
 "I read a lot of books but after I finish reading them I often don't remember all the most salient parts of the book. So I started taking notes. This capstone project is built on this idea. The books are sortable by recency."\
 \
-I present a family Book Notes to make notes about readed books. An application is designed for five members (users), members can be added and removed at any time. In addition two members can have the same name, cannot have the same colors. An application does not require authentication.\
+I present a family Book Notes to make notes about readed books. An application is designed for five members (users), members can be added and removed at any time. In addition two members can have the same name, cannot have the same colors.\
+An application does not require authentication.
 
 ## Table of contents
 
@@ -21,23 +22,21 @@ It's a Single Page Application using the Express/Node.js platform, with Axios HT
 The app interact with the chosen API and fetch book covers.\
 \
 User data are persist using a PostgreSQL database.\
-\
-An application used CRUD methods to manipulate data in the database.
+An application used CRUD methods to manipulate data in the database and simple data validation applied.\
+Error handling - console log (for developers) and user-relevant errors.
 
 ### How to start
 
+- download the Postgres Installer and create a new pgAdmin account,
+- create a new database called "book_notes" in pgAdmin,
+- run the queries.sql code in pgAdmin Query Tool to create required tables,
+
 - use e.g. Visual Studio Code,
+- provide a pgAdmin password in index.js file,
 - run command to install dependencies -> npm i,
 - run command to install nodemon globally on the PC -> npm i -g nodemon,
 - run command -> nodemon index.js,
 - website is running on localhost, so open a web browser and run http://localhost:3000/
-
-[in progress]
-
-- provide password
-- create an account in pgAdmin,
-- create a new database called "" in pgAdmin,
-- run the queries.sql code in pgAdmin to create tables,
 
 ### Database schema
 
