@@ -230,26 +230,22 @@ app.post("/user/sort", async (req, res) => {
 });
 
 app.post("/user/add", async (req, res) => {
+  const users = await fetchUsers();
+
   try {
-    const users = await fetchUsers();
-    console.log(users.length);
+    //console.log(users.length);
 
     if (users.length < 5) {
-      const lastId = await db.query(
-        "INSERT INTO users (name, color) VALUES ($1, $2) RETURNING id",
+      const lastUser = await db.query(
+        "INSERT INTO users (name, color) VALUES ($1, $2) RETURNING *",
         [req.body.name, req.body.color]
       );
 
-      currentUserId = parseInt(lastId.rows[0].id);
-
-      const users = await fetchUsers();
-      const user = users.find((user) => user.id === currentUserId);
-      username = user.name;
+      currentUserId = parseInt(lastUser.rows[0].id);
+      username = lastUser.rows[0].name;
 
       res.redirect("/user");
     } else {
-      const users = await fetchUsers();
-
       res.render("index.ejs", {
         title: username,
         users: users,
@@ -261,7 +257,6 @@ app.post("/user/add", async (req, res) => {
   } catch (error) {
     console.log(error);
 
-    const users = await fetchUsers();
     const books = await fetchBooks(currentUserId, sortBy);
 
     res.render("index.ejs", {
