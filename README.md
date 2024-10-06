@@ -39,9 +39,9 @@ An application used CRUD methods to manipulate data in the database.
 - create a new database called "" in pgAdmin,
 - run the queries.sql code in pgAdmin to create tables,
 
-### Database design
+### Database schema
 
-[in progress]
+![](./readme/db_schema.jpg)
 
 ### Screenshot
 
