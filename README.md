@@ -60,7 +60,7 @@ Error handling - console log (for developers) and user-relevant errors.
 
 ![](./readme/new_book_form.jpg)
 
-- Selected cover from the available covers with completed fields:
+- Selected cover from the available covers with fields completed by the user:
 
 ![](./readme/chosen_cover.jpg)
 
