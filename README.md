@@ -28,11 +28,12 @@ Error handling - console log (for developers) and user-relevant errors.
 ### How to start
 
 - download the Postgres Installer and create a new pgAdmin account,
-- create a new database called "book_notes" in pgAdmin,
+- create a new database called e.g. "book_notes" in pgAdmin,
 - run the queries.sql code in pgAdmin Query Tool to create required tables,
-
+  \
 - use e.g. Visual Studio Code,
-- provide a pgAdmin password in index.js file,
+- create file named .env and fill it like .env.example file (or see below):
+  ![](./readme/.env.jpg)
 - run command to install dependencies -> npm i,
 - run command to install nodemon globally on the PC -> npm i -g nodemon,
 - run command -> nodemon index.js,
